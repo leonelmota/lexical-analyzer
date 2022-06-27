@@ -1,4 +1,5 @@
-/*
+%{
+  /*
  *  The scanner definition for COOL.
 */
 
@@ -7,8 +8,6 @@
  *  output, so headers and global definitions are placed here to be visible
  * to the code in the file.  Don't remove anything that was here initially
 */
-
-%{
 #include <cool-parse.h>
 #include <stringtab.h>
 #include <utilities.h>
@@ -49,8 +48,34 @@ extern YYSTYPE cool_yylval;
 /*
  * Define names for regular expressions here.
  */
-
-DARROW          =>
+NEWLINE             \n
+WHITESPACE          [ \n\f\r\t\v]
+ONELINE_COMMENT     "--"(.*)
+CLASS               (?i:class)
+ELSE                (?i:else)
+FI                  (?i:fi)
+IF                  (?i:if)
+IN                  (?i:in)
+INHERITS            (?i:inherits)
+ISVOID              (?i:isvoid)
+LET                 (?i:let)
+LOOP                (?i:loop)
+POOL                (?i:pool)
+THEN                (?i:then)
+WHILE               (?i:while)
+CASE                (?i:case)
+ESAC                (?i:esac)
+NEW                 (?i:new)
+OF                  (?i:of)
+NOT                 (?i:not)
+FALSE               "f"(?i:alse)
+TRUE                "t"(?i:rue)
+DARROW              =>
+ASSIGN              <-
+LE                  <=
+INTEGER             [0-9]+
+TYPE_ID             [A-Z][a-zA-Z0-9_]*
+OBJECT_ID           [a-z][a-zA-Z0-9_]*
 
 %%
 
