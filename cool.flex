@@ -11,6 +11,13 @@
 #include <cool-parse.h>
 #include <stringtab.h>
 #include <utilities.h>
+#include <string>
+
+void append(char* s, char c){
+  int len = strlen(s);
+  s[len] = c;
+  s[len+1] = '\0';
+}
 
 /* The compiler assumes these identifiers. */
 #define yylval cool_yylval
@@ -31,6 +38,12 @@ extern FILE *fin; /* we read from this file */
 	if ( (result = fread( (char*)buf, sizeof(char), max_size, fin)) < 0) \
 		YY_FATAL_ERROR( "read() in flex scanner failed");
 
+#define COOL_SET_ERRMSG(message, ...) do { \
+        sprintf(err_message, message, __VA_ARGS__); \
+        cool_yylval.error_msg = err_message; \
+    } while(0);
+
+
 char string_buf[MAX_STR_CONST]; /* to assemble string constants */
 char *string_buf_ptr;
 
@@ -42,47 +55,47 @@ extern YYSTYPE cool_yylval;
 /*
  *  Add Your own definitions here
  */
+int comment_depth = 0;
+char err_message[160];
 
 %}
 
 /*
  * Define names for regular expressions here.
  */
-NEWLINE             \n
-WHITESPACE          [ \n\f\r\t\v]
-ONELINE_COMMENT     "--"(.*)
-CLASS               (?i:class)
-ELSE                (?i:else)
-FI                  (?i:fi)
-IF                  (?i:if)
-IN                  (?i:in)
-INHERITS            (?i:inherits)
-ISVOID              (?i:isvoid)
-LET                 (?i:let)
-LOOP                (?i:loop)
-POOL                (?i:pool)
-THEN                (?i:then)
-WHILE               (?i:while)
-CASE                (?i:case)
-ESAC                (?i:esac)
-NEW                 (?i:new)
-OF                  (?i:of)
-NOT                 (?i:not)
-FALSE               "f"(?i:alse)
-TRUE                "t"(?i:rue)
-DARROW              =>
-ASSIGN              <-
-LE                  <=
-INTEGER             [0-9]+
-TYPE_ID             [A-Z][a-zA-Z0-9_]*
-OBJECT_ID           [a-z][a-zA-Z0-9_]*
+
+DARROW          =>
+%Start COMMENT
+%X STRING
+
 
 %%
+ /* Skip delimiters  */
+[ \t\f\r\v]                     ;
+ /* Count lines */
+\n  ++curr_lineno; // printf("Line: %i\n", curr_lineno);
+
+[0-9]+  {
+    yylval.symbol = inttable.add_string(yytext);
+    return (INT_CONST);
+}
+
+ /* One line comment */
+--.*    ;
 
  /*
   *  Nested comments
   */
-
+"(*"    { BEGIN(COMMENT); comment_depth++; }
+<COMMENT>"*)"   {
+        comment_depth--;
+        if (comment_depth == 0) BEGIN(INITIAL);
+    }
+<COMMENT>.  ;
+"*)"    {
+            cool_yylval.error_msg = "Unmatched *)";
+            return (ERROR);
+        }
 
  /*
   *  The multiple-character operators.
@@ -93,6 +106,28 @@ OBJECT_ID           [a-z][a-zA-Z0-9_]*
   * Keywords are case-insensitive except for the values true and false,
   * which must begin with a lower-case letter.
   */
+(?i:class)      return (CLASS);
+(?i:else)       return (ELSE);
+(?i:fi)         return (FI);
+(?i:if)         return (IF);
+(?i:in)         return (IN);
+(?i:inherits)   return (INHERITS);
+(?i:isvoid)     return (ISVOID);
+(?i:let)        return (LET);
+(?i:loop)       return (LOOP);
+(?i:pool)       return (POOL);
+(?i:then)       return (THEN);
+(?i:while)      return (WHILE);
+(?i:case)       return (CASE);
+(?i:esac)       return (ESAC);
+(?i:of)         return (OF);
+(?i:new)        return (NEW);
+(?i:not)        return (NOT);
+true|false      { yylval.symbol = inttable.add_string(yytext); return (BOOL_CONST); }
+=               return (ASSIGN);
+
+[a-z][a-zA-Z0-9_]*  { yylval.symbol = inttable.add_string(yytext); return (OBJECTID); }
+[A-Z][a-zA-Z0-9_]*  { yylval.symbol = inttable.add_string(yytext); return (TYPEID); }
 
 
  /*
@@ -101,6 +136,40 @@ OBJECT_ID           [a-z][a-zA-Z0-9_]*
   *  \n \t \b \f, the result is c.
   *
   */
+\"          { BEGIN(STRING); strcpy(string_buf,""); }
+<STRING>[^\\\"]*    {
+                strcat(string_buf, yytext);
+                // TODO: lengh testing
+            }
+
+<STRING>\\.     {
+                switch (yytext[1])
+                {
+                    case 'b': append(string_buf, '\b'); break;
+                    case 't': append(string_buf, '\t'); break;
+                    case 'n': append(string_buf, '\n'); break;
+                    case 'f': append(string_buf, '\f'); break;
+                    default: append(string_buf, yytext[1]);
+                }
+            }
+<STRING>\\$     curr_lineno++;
+<STRING>\"      {
+                BEGIN(INITIAL);
+                yylval.symbol = inttable.add_string(string_buf);
+                return (STR_CONST);
+            }
+ /* TODO: */
+<STRING>[^\\\"]$    {
+        BEGIN(INITIAL);
+        cool_yylval.error_msg = "Unterminated string constant";
+        return (ERROR);
+    }
+
+
+.   {
+        COOL_SET_ERRMSG( "Invalid character: %s", yytext);
+        return (ERROR);
+    }
 
 
 %%
