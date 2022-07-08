@@ -118,8 +118,27 @@ Instructions
 
 	GOOD LUCK!
 
----8<------8<------8<------8<---cut here---8<------8<------8<------8<---
 
-Write-up for PA2
-----------------
+Decisões de projeto
+------------
+Para o trabalho, foi necessário definir a leitura dos tokens da linguagem.
 
+O símbolo '--' foi utilizado como comentário, '<-' para atribuir valores, e '<=' para leitura.
+
+O código também pula espaços em branco, de forma a ignorá-los na saída.
+
+Estão definidos os operadores principais utilizados na linguagem:
+
+'{}', '()', '<>', '/', '%', '+', '-', '*', '=', '.', '@', '~', '-', ';', ','.
+
+Os operadores de múltiplos caracteres são definidos com todas as letras maíusculas, exceto por true e false, retornando:
+
+CLASS, ELSE, IF, FI, IN, INHERITS, ISVOID, LET, LOOP, POOL, THEN, WHILE, CASE, ESAC, OF, NEW, NOT, true, false
+
+Por fim, as strings são definidas com uma síntaxe de C, checando e levantando erros para caracteres inválidos e constante de string indeterminada.
+
+Para o teste, foi implementado, em test.cl. No arquivo, são feitos diversos testes da linguagem, incluindo classes, comentários, estruturas de dados e strings:
+- É criada uma classe List, que testa o tipo dos objetos e converte em string, utilizando também a função abort.
+- Uma função é criada para testar operações aritméticas, recebendo um número i e retornando i*(-1) para i<0 e i * (10 - 4) / 3 + 15 ~ 5 para i>0, testando as operações definidas.
+- Testa-se uma classe Main, que herda IO e cria uma lista de strings com 'Ola', 'Mundo', e '/n', para trocar de linha. Em seguida, é imprimida a lista com o 'Ola Mundo'.
+- Por fim, também são testados os comentários durante o código, retornando o que era esperado para cada caso.
