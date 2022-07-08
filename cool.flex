@@ -97,6 +97,26 @@ DARROW          =>
             return (ERROR);
         }
 
+/* single character operators */
+
+"{"			{ return '{'; }
+"}"			{ return '}'; }
+"("			{ return '('; }
+")"			{ return ')'; }
+"~"			{ return '~'; }
+","			{ return ','; }
+";"			{ return ';'; }
+":"			{ return ':'; }
+"+"			{ return '+'; }
+"-"			{ return '-'; }
+"*"			{ return '*'; }
+"/"			{ return '/'; }
+"%"			{ return '%'; }
+"."			{ return '.'; }
+"<"			{ return '<'; }
+"="			{ return '='; }
+"@"			{ return '@'; }
+
  /*
   *  The multiple-character operators.
   */
