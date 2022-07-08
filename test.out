@@ -1,0 +1,227 @@
+#name "test.cl"
+#9 CLASS
+#9 TYPEID List
+#9 INHERITS
+#9 TYPEID A2I
+#9 '{'
+#10 OBJECTID item
+#10 ':'
+#10 TYPEID Object
+#10 ';'
+#11 OBJECTID proximo
+#11 ':'
+#11 TYPEID List
+#11 ';'
+#13 OBJECTID init
+#13 '('
+#13 OBJECTID item_
+#13 ':'
+#13 TYPEID Object
+#13 ','
+#13 OBJECTID lista_
+#13 ':'
+#13 TYPEID List
+#13 ')'
+#13 ':'
+#13 TYPEID List
+#13 '{'
+#14 '{'
+#15 OBJECTID item
+#15 ASSIGN
+#15 OBJECTID item_
+#15 ';'
+#16 OBJECTID proximo
+#16 ASSIGN
+#16 OBJECTID lista_
+#16 ';'
+#17 OBJECTID self
+#17 ';'
+#18 '}'
+#19 '}'
+#19 ';'
+#21 OBJECTID flatten
+#21 '('
+#21 ')'
+#21 ':'
+#21 TYPEID String
+#21 '{'
+#23 LET
+#23 OBJECTID string
+#23 ':'
+#23 TYPEID String
+#23 ASSIGN
+#24 CASE
+#24 OBJECTID item
+#24 OF
+#25 OBJECTID i
+#25 ':'
+#25 TYPEID Int
+#25 DARROW
+#25 OBJECTID i2a
+#25 '('
+#25 OBJECTID i
+#25 ')'
+#25 ';'
+#26 OBJECTID s
+#26 ':'
+#26 TYPEID String
+#26 DARROW
+#26 OBJECTID s
+#26 ';'
+#27 OBJECTID o
+#27 ':'
+#27 TYPEID Object
+#27 DARROW
+#27 '{'
+#27 OBJECTID abort
+#27 '('
+#27 ')'
+#27 ';'
+#27 STR_CONST ""
+#27 ';'
+#27 '}'
+#27 ';'
+#28 ESAC
+#29 IN
+#30 IF
+#30 '('
+#30 ISVOID
+#30 OBJECTID next
+#30 ')'
+#30 THEN
+#31 OBJECTID string
+#32 ELSE
+#33 OBJECTID string
+#33 '.'
+#33 OBJECTID concat
+#33 '('
+#33 OBJECTID proximo
+#33 '.'
+#33 OBJECTID flatten
+#33 '('
+#33 ')'
+#33 ')'
+#34 FI
+#35 '}'
+#35 ';'
+#37 OBJECTID formula
+#37 '('
+#37 OBJECTID i
+#37 ':'
+#37 TYPEID Int
+#37 ')'
+#37 ':'
+#37 TYPEID Int
+#37 '{'
+#38 IF
+#38 '('
+#38 OBJECTID i
+#38 '<'
+#38 INT_CONST 0
+#38 ')'
+#39 THEN
+#39 OBJECTID i
+#39 '*'
+#39 '('
+#39 INT_CONST 10
+#39 '-'
+#39 INT_CONST 4
+#39 ')'
+#39 '/'
+#39 INT_CONST 3
+#39 '+'
+#39 INT_CONST 15
+#39 '~'
+#39 INT_CONST 5
+#40 ELSE
+#40 OBJECTID i
+#40 '*'
+#40 '('
+#40 '-'
+#40 INT_CONST 1
+#40 ')'
+#41 FI
+#42 '}'
+#42 ';'
+#43 '}'
+#43 ';'
+#45 CLASS
+#45 TYPEID Main
+#45 INHERITS
+#45 TYPEID IO
+#45 '{'
+#47 OBJECTID main
+#47 '('
+#47 ')'
+#47 ':'
+#47 TYPEID Object
+#47 '{'
+#48 LET
+#48 OBJECTID ola
+#48 ':'
+#48 TYPEID String
+#48 ASSIGN
+#48 STR_CONST "Ola "
+#48 ','
+#49 OBJECTID mundo
+#49 ':'
+#49 TYPEID String
+#49 ASSIGN
+#49 STR_CONST "Mundo!"
+#49 ','
+#50 OBJECTID newline
+#50 ':'
+#50 TYPEID String
+#50 ASSIGN
+#50 STR_CONST "\n"
+#51 OBJECTID nil
+#51 ':'
+#51 TYPEID List
+#51 ','
+#52 OBJECTID list
+#52 ':'
+#52 TYPEID List
+#52 '('
+#52 NEW
+#52 TYPEID List
+#52 ')'
+#52 '.'
+#52 OBJECTID init
+#52 '('
+#52 OBJECTID ola
+#52 ','
+#53 '('
+#53 NEW
+#53 TYPEID List
+#53 ')'
+#53 '.'
+#53 OBJECTID init
+#53 '('
+#53 OBJECTID mundo
+#53 ','
+#54 '('
+#54 NEW
+#54 TYPEID List
+#54 ')'
+#54 '.'
+#54 OBJECTID init
+#54 '('
+#54 OBJECTID newline
+#54 ','
+#54 OBJECTID nil
+#54 ')'
+#54 ')'
+#54 ')'
+#55 IN
+#56 OBJECTID string_saida
+#56 '('
+#56 OBJECTID list
+#56 '.'
+#56 OBJECTID flatten
+#56 '('
+#56 ')'
+#56 ')'
+#57 '}'
+#57 ';'
+#58 '}'
+#58 ';'
