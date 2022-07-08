@@ -66,8 +66,10 @@ char err_message[160];
  */
 
 DARROW          =>
+ASSIGN			<-
+LE				<=
 %Start COMMENT
-%X STRING
+%X STRING BLOCK_COMMENT
 
 
 %%
@@ -87,21 +89,27 @@ DARROW          =>
  /*
   *  Nested comments
   */
-"(*"    { BEGIN(COMMENT); comment_depth++; }
-<COMMENT>"*)"   {
-        comment_depth--;
-        if (comment_depth == 0) BEGIN(INITIAL);
-    }
-<COMMENT>.  ;
-"*)"    {
-            cool_yylval.error_msg = "Unmatched *)";
-            return (ERROR);
-        }
 
-/* single character operators */
+"(*"			{ BEGIN BLOCK_COMMENT; }
+"*)"			{
+	strcpy(cool_yylval.error_msg, "Unmatched *)");
+	return (ERROR);
+}
+
+<BLOCK_COMMENT>\n		{ curr_lineno++; }
+<BLOCK_COMMENT>"\*)"	{ BEGIN 0; }
+<BLOCK_COMMENT><<EOF>>	{
+	strcpy(cool_yylval.error_msg, "EOF in comment");
+	BEGIN 0; return (ERROR);
+}
+
+<BLOCK_COMMENT>.		{}
+
 
 "{"			{ return '{'; }
 "}"			{ return '}'; }
+"["			{ return '['; }
+"]"			{ return ']'; }
 "("			{ return '('; }
 ")"			{ return ')'; }
 "~"			{ return '~'; }
@@ -115,6 +123,7 @@ DARROW          =>
 "%"			{ return '%'; }
 "."			{ return '.'; }
 "<"			{ return '<'; }
+">"			{ return '>'; }
 "="			{ return '='; }
 "@"			{ return '@'; }
 
@@ -122,6 +131,8 @@ DARROW          =>
   *  The multiple-character operators.
   */
 {DARROW}		{ return (DARROW); }
+{ASSIGN}		{ return (ASSIGN); }
+{LE}			{ return (LE); }
 
  /*
   * Keywords are case-insensitive except for the values true and false,
